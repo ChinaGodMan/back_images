@@ -1,0 +1,30 @@
+name: Download images
+
+on:
+  schedule:
+    - cron: "0 0 * * *" 
+  workflow_dispatch:
+
+jobs:
+  run-python:
+    runs-on: ubuntu-latest
+    env:
+      TZ: Asia/Shanghai
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: pip install requests
+        run: pip install requests
+      - name: download
+        run: python download.py
+        env:
+          SM_MS_TOKEN: ${{ secrets.SM_MS_TOKEN }}
+      - name: push
+        run: |
+          git config --global user.name 'ChinaGodBot'
+          git config --global user.email 'chinagodman1@gmail.com'
+          git pull
+          git add .
+          git commit -m "备份图片" || true
+          git push
+
